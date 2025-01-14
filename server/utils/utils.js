@@ -1,11 +1,6 @@
-
-
 const utils = {
-
-
-    otpTemplate : (otp) => {
-         
-        const html = `
+  otpTemplate: (otp) => {
+    const html = `
         <body style="font-family: Helvetica, Arial, sans-serif; margin: 0px; padding: 0px; background-color: #ffffff;">
   <table role="presentation"
     style="width: 100%; border-collapse: collapse; border: 0px; border-spacing: 0px; font-family: Arial, Helvetica, sans-serif; background-color: rgb(239, 239, 239);">
@@ -43,14 +38,13 @@ const utils = {
         
         `;
 
-        return html
-    },
+    return html;
+  },
 
-    passwordResetTemplate : (resetToken) => {
+  passwordResetTemplate: (resetToken) => {
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-        const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-
-  const html = `<body style="font-family: Helvetica, Arial, sans-serif; margin: 0px; padding: 0px; background-color: #ffffff;">
+    const html = `<body style="font-family: Helvetica, Arial, sans-serif; margin: 0px; padding: 0px; background-color: #ffffff;">
   <table role="presentation"
     style="width: 100%; border-collapse: collapse; border: 0px; border-spacing: 0px; font-family: Arial, Helvetica, sans-serif; background-color: rgb(239, 239, 239);">
     <tbody>
@@ -86,13 +80,8 @@ const utils = {
   </table>
 </body>`;
 
-  return html
+    return html;
+  },
+};
 
-    }
-
-
-}
-
-
-
-module.exports = utils
+module.exports = utils;

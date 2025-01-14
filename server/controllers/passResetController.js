@@ -35,10 +35,8 @@ const requestPasswordReset = async (req, res) => {
       .update({ reset_token: resetToken, token_expiry: tokenExpiry })
       .eq("email", email);
 
-    
-    const html = utils.passwordResetTemplate( resetToken);
-   
-          
+    const html = utils.passwordResetTemplate(resetToken);
+
     const subject = "Password Reset";
 
     // Send reset email
@@ -116,7 +114,7 @@ const resetPassword = async (req, res) => {
     console.error("Reset password error:", error);
     return res
       .status(500)
-      .json({ message: `"Internal Server Error : ${erorr.message}"` });
+      .json({ message: `"Internal Server Error : ${error.message}"` });
   }
 };
 

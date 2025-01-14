@@ -80,20 +80,22 @@ const loginUser = async (req, res) => {
 
     // Generate JWT token if password matches
     const accesstoken = generateToken(user);
-    const refreshToken = generateRefreshToken(user)
+    const refreshtoken = generateRefreshToken(user)
 
     res.cookie("accessToken", accesstoken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS in production
       sameSite: "Strict",
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 15 * 60 * 1000, 
+      path : '/'// 15 minutes
     });
     
-    res.cookie("refreshToken", refreshToken, {
+    res.cookie("refreshToken", refreshtoken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS in production
       sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 15 minutes
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/", // 7 days
     });
     return res
       .status(200)
@@ -107,7 +109,7 @@ const loginUser = async (req, res) => {
 // Refresh Token Controller
 const refreshToken = (req, res) => {
   const token = req.cookies.refreshToken;
-
+ 
 
   if (!token) {
     return handleErrorResponse(res, 401, "Unauthorized: No refresh token provided");
@@ -131,7 +133,8 @@ const refreshToken = (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Use secure in production
       sameSite: "Strict",
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 15 * 60 * 1000,
+      path: "/", // 15 minutes
     });
 
     // Send the response

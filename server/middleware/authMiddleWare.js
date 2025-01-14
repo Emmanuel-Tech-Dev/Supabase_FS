@@ -14,11 +14,13 @@ const verifyToken = (token) =>
 const authentication = async (req, res, next) => {
   try {
     const accessToken = req.cookies.accessToken;
+   
     if (!accessToken) {
       return res.status(401).json({ message: "Unauthorized" });
     } // Log the token being verified
 
-    const user = await verifyToken(accessToken); // This line should execute after logging
+    const user = await verifyToken(accessToken);
+   // This line should execute after logging
     req.user = user;
     next();
   } catch (error) {

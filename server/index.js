@@ -23,11 +23,27 @@ const limiter = rateLimiter({
 
 
 app.use(cookieParser());
-app.use(cors({
-    origin: "http://localhost:3000", // Adjust to your frontend URL
+const allowedOrigins = [
+  "http://localhost:3000", // Local development frontend
+  "http://localhost:5173", // Example of another local URL
+  "https://my-production-app.com", // Production frontend
+  "https://staging-app.com", // Staging frontend
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true, // Allow credentials (cookies)
   })
 );
+
 app.use(express.json());
 app.use(limiter)
 

@@ -123,7 +123,7 @@ const verifyOtp = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS in production
       sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 15 minutes
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     return res.status(200).json({ message: "Login successful" });
   } catch (error) {
