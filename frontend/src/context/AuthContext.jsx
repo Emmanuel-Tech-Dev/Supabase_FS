@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
@@ -23,28 +23,38 @@ const AuthProvider = ({ children }) => {
         async (error) => {
             const originalRequest = error.config;
             let refreshing = false;
-            let isRefreshed = [];
+            let isRefreshed = null;
 
             // If the response status is 403 (forbidden), attempt to refresh the session
             if (error.response?.status === 401 && !originalRequest._retry) {
                 originalRequest._retry = true;  // Prevent multiple retries for the same request
 
                 try {
-                    // Attempt to refresh the session by calling the refresh token endpoint
-                    const refreshResponse = await axiosInstance.post("/auth/token/refresh");
+                    if (!isRefreshed) {
+                        try {
+                            // Attempt to refresh the session by calling the refresh token endpoint
+                            const refreshResponse = await axiosInstance.post("/auth/token/refresh");
 
-                    if (refreshResponse.status === 200) {
-                        console.log("Session refreshed, retrying original request.");
+                            if (refreshResponse.status === 200) {
+                                console.log("Session refreshed, retrying original request.");
 
-                        // Retry the original request after refreshing the session
-                        return axiosInstance(originalRequest);
-                    } else {
-                        throw new Error("Failed to refresh session.");
+                                // Retry the original request after refreshing the session
+                                return axiosInstance(originalRequest);
+                            } else {
+                                throw new Error("Failed to refresh session.");
+                            }
+                        } catch (refreshError) {
+                            console.error("Token refresh failed:", refreshError);
+                            logOut();  // Log the user out if session refresh fails
+                        }
                     }
-                } catch (refreshError) {
-                    console.error("Token refresh failed:", refreshError);
-                    logOut();  // Log the user out if session refresh fails
+                } catch (err) {
+                    console.log(err);
+                    return Promise.reject(err);
                 }
+
+
+
             }
 
             return Promise.reject(error);  // Reject the promise if not 403 or retry fails
@@ -52,7 +62,7 @@ const AuthProvider = ({ children }) => {
     );
 
     // Function to log in the user
-    const logIn = async (formData) => {
+    const logIn = useCallback(async (formData) => {
         setLoading(true);
         setError(null);
 
@@ -75,14 +85,14 @@ const AuthProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     // Function to log out and clear the session
-    const logOut = () => {
+    const logOut = useCallback(() => {
         axiosInstance.post("/auth/logout").then(() => {
             console.log("User logged out.");
         });
-    };
+    }, []);
 
     return (
         <AuthContext.Provider value={{ logIn, logOut, loading, error }}>

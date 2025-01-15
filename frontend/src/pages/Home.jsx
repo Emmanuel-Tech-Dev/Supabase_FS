@@ -17,7 +17,7 @@ const Home = () => {
   console.log(cart)
 
 
-  // useffect(() => {
+  // useEffect(() => {
   //   const userData = async () => {
 
   //     const res = await axiosInstance.get(`/auth/user/profile`,
